@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Check, Trash2, Share2, X } from 'lucide-react';
+import { Plus, Check, Trash2, Share2, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface ShoppingItem {
@@ -48,6 +48,7 @@ export default function App() {
   
   const [isAdding, setIsAdding] = useState(false);
   const [isEditingList, setIsEditingList] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [currentProduct, setCurrentProduct] = useState('');
   const [currentPrice, setCurrentPrice] = useState('');
   const [currentTotal, setCurrentTotal] = useState('');
@@ -198,76 +199,106 @@ export default function App() {
           </button>
         </header>
 
-        <div className="space-y-8 max-w-lg mx-auto">
-          {categories.map((cat, catIdx) => (
-            <div key={cat.id} className="bg-zinc-900 border-2 border-zinc-800 rounded-3xl p-6 space-y-6 shadow-2xl">
-              <div className="flex justify-between items-center pb-4 border-b border-zinc-800">
-                <input 
-                  className="bg-transparent font-black text-2xl text-emerald-400 focus:outline-none border-b-2 border-transparent focus:border-emerald-500 w-full"
-                  value={cat.name}
-                  onChange={(e) => {
-                    const newCats = [...categories];
-                    newCats[catIdx].name = e.target.value;
-                    setCategories(newCats);
-                  }}
-                />
-                <button 
-                  onClick={() => {
-                    if(confirm(`Видалити категорію ${cat.name}?`)) {
-                      setCategories(categories.filter(c => c.id !== cat.id));
-                    }
-                  }}
-                  className="text-zinc-600 hover:text-red-500 ml-4 p-2"
-                >
-                  <Trash2 size={28} />
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {cat.products.map((prod, prodIdx) => (
-                  <div key={prodIdx} className="bg-zinc-800 border border-zinc-700 px-4 py-2 rounded-xl text-lg font-bold flex items-center gap-3 shadow-md">
-                    <span className="text-zinc-100">{prod}</span>
-                    <button 
-                      onClick={() => {
-                        const newCats = [...categories];
-                        newCats[catIdx].products.splice(prodIdx, 1);
-                        setCategories(newCats);
-                      }}
-                      className="text-zinc-500 hover:text-red-400"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                ))}
-                <button 
-                  onClick={() => {
-                    const name = prompt('Назва нового продукту:');
-                    if (name) {
-                      const newCats = [...categories];
-                      if (!newCats[catIdx].products.includes(name)) {
-                        newCats[catIdx].products.push(name);
-                        newCats[catIdx].products.sort((a, b) => a.localeCompare(b));
-                        setCategories(newCats);
-                      }
-                    }
-                  }}
-                  className="bg-emerald-900/40 text-emerald-400 px-5 py-2 rounded-xl text-lg font-black border-2 border-emerald-500/30 hover:bg-emerald-900/60 transition-all"
-                >
-                  + Продукт
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="space-y-3 max-w-lg mx-auto">
           <button 
             onClick={() => {
               const name = prompt('Назва нової категорії:');
               if (name) {
-                setCategories([...categories, { id: Date.now().toString(), name, products: [] }]);
+                const newId = Date.now().toString();
+                setCategories([...categories, { id: newId, name, products: [] }]);
+                setExpandedCategories(prev => ({ ...prev, [newId]: true }));
               }
             }}
-            className="w-full py-6 border-4 border-dashed border-zinc-800 rounded-3xl text-zinc-400 font-black uppercase text-xl tracking-widest bg-zinc-900/30 hover:border-emerald-500/40 hover:text-emerald-400 transition-all shadow-xl"
+            className="w-full py-3.5 border-2 border-dashed border-zinc-800 rounded-2xl text-zinc-400 font-black uppercase text-base tracking-widest bg-zinc-900/30 hover:border-emerald-500/40 hover:text-emerald-400 transition-all shadow-xl"
           >
             + Нова категорія
           </button>
+
+          {categories.map((cat, catIdx) => {
+            const isExpanded = !!expandedCategories[cat.id];
+            return (
+              <div key={cat.id} className={`bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-xl transition-all ${isExpanded ? 'p-4' : 'px-4 py-2.5'}`}>
+                <div className="flex justify-between items-center gap-3">
+                  <button
+                    onClick={() => setExpandedCategories(prev => ({ ...prev, [cat.id]: !prev[cat.id] }))}
+                    className="flex items-center gap-2.5 text-left flex-1 min-w-0"
+                  >
+                    <ChevronDown 
+                      size={20} 
+                      className={`text-emerald-400 transition-transform shrink-0 ${isExpanded ? '' : '-rotate-90'}`} 
+                    />
+                    <span className="font-black text-xl leading-none text-emerald-400 truncate">{cat.name}</span>
+                    <span className="text-xs font-bold text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-full shrink-0">
+                      {cat.products.length}
+                    </span>
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      if(confirm(`Видалити категорію ${cat.name}?`)) {
+                        setCategories(categories.filter(c => c.id !== cat.id));
+                      }
+                    }}
+                    className="text-zinc-600 hover:text-red-500 p-1 shrink-0"
+                    title="Видалити категорію"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+
+                {isExpanded && (
+                  <div className="mt-4 pt-3 border-t border-zinc-800 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black uppercase text-zinc-500 tracking-wider shrink-0">Назва:</span>
+                      <input 
+                        className="bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded-xl font-bold text-base text-emerald-300 focus:outline-none focus:border-emerald-500 w-full"
+                        value={cat.name}
+                        onChange={(e) => {
+                          const newCats = [...categories];
+                          newCats[catIdx].name = e.target.value;
+                          setCategories(newCats);
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {cat.products.map((prod, prodIdx) => (
+                        <div key={prodIdx} className="bg-zinc-800 border border-zinc-700 px-3 py-1 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm">
+                          <span className="text-zinc-100">{prod}</span>
+                          <button 
+                            onClick={() => {
+                              const newCats = [...categories];
+                              newCats[catIdx].products.splice(prodIdx, 1);
+                              setCategories(newCats);
+                            }}
+                            className="text-zinc-500 hover:text-red-400"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                      <button 
+                        onClick={() => {
+                          const name = prompt('Назва нового продукту:');
+                          if (name) {
+                            const newCats = [...categories];
+                            if (!newCats[catIdx].products.includes(name)) {
+                              newCats[catIdx].products.push(name);
+                              newCats[catIdx].products.sort((a, b) => a.localeCompare(b));
+                              setCategories(newCats);
+                            }
+                          }
+                        }}
+                        className="bg-emerald-900/40 text-emerald-400 px-3 py-1 rounded-xl text-sm font-black border border-emerald-500/30 hover:bg-emerald-900/60 transition-all"
+                      >
+                        + Продукт
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -329,86 +360,105 @@ export default function App() {
             </div>
 
             <div className="space-y-6 pt-2">
-              <div className="relative">
-                <label className="block text-sm font-black uppercase tracking-widest text-zinc-400 mb-3">Продукт</label>
-                <button
-                  ref={productRef}
-                  onClick={() => setShowPicker(!showPicker)}
-                  className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-5 py-5 text-left flex justify-between items-center focus:outline-none focus:border-emerald-500 transition-colors text-2xl font-bold shadow-inner"
-                >
-                  <span className={currentProduct ? 'text-zinc-50' : 'text-zinc-500'}>
-                    {currentProduct || 'Оберіть...'}
-                  </span>
-                  <Plus size={28} className={`transition-transform text-emerald-400 ${showPicker ? 'rotate-45' : ''}`} />
-                </button>
+              <div className="flex justify-between items-end gap-2">
+                <div className="relative w-[211px]">
+                  <label className="block text-sm font-black uppercase tracking-widest text-zinc-400 mb-2">Продукт</label>
+                  <button
+                    ref={productRef}
+                    onClick={() => setShowPicker(!showPicker)}
+                    className="w-[211px] bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-4 py-3.5 text-left flex justify-between items-center focus:outline-none focus:border-emerald-500 transition-colors text-xl font-bold shadow-inner"
+                  >
+                    <span className={`truncate ${currentProduct ? 'text-zinc-50' : 'text-zinc-500'}`}>
+                      {currentProduct || 'Оберіть...'}
+                    </span>
+                    <Plus size={24} className={`transition-transform text-emerald-400 shrink-0 ${showPicker ? 'rotate-45' : ''}`} />
+                  </button>
 
-                {showPicker && (
-                  <div className="absolute z-50 top-full left-0 right-0 mt-4 bg-zinc-900 border-2 border-zinc-700 rounded-2xl shadow-2xl overflow-hidden max-h-96 flex flex-col">
-                    {!selectedCategoryId ? (
-                      <div className="p-3 grid grid-cols-2 gap-3 overflow-y-auto">
-                        {categories.map(cat => (
-                          <button
-                            key={cat.id}
-                            onClick={() => setSelectedCategoryId(cat.id)}
-                            className="bg-zinc-800 p-5 rounded-xl text-sm font-black uppercase tracking-tight text-center hover:bg-zinc-700 active:scale-95 transition-all text-zinc-200"
-                          >
-                            {cat.name}
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="p-3 flex flex-col h-full overflow-hidden">
-                        <div className="flex items-center gap-2 mb-4">
-                          <button 
-                            onClick={() => setSelectedCategoryId(null)}
-                            className="bg-zinc-800 p-3 rounded-xl text-zinc-400"
-                          >
-                            <X size={20} />
-                          </button>
-                          <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500">{categories.find(c => c.id === selectedCategoryId)?.name}</h3>
-                        </div>
-
-                        {/* Add new product directly in picker */}
-                        <div className="flex gap-2 mb-4">
-                          <input 
-                            id="new-prod-picker"
-                            type="text" 
-                            placeholder="Новий продукт..."
-                            className="flex-1 bg-zinc-800 border-2 border-zinc-700 rounded-xl px-4 py-3 text-lg font-bold focus:outline-none focus:border-emerald-500"
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                addNewProductToCategory(selectedCategoryId, (e.target as HTMLInputElement).value);
-                                (e.target as HTMLInputElement).value = '';
-                              }
-                            }}
-                          />
-                          <button 
-                            onClick={() => {
-                              const input = document.getElementById('new-prod-picker') as HTMLInputElement;
-                              addNewProductToCategory(selectedCategoryId, input.value);
-                              input.value = '';
-                            }}
-                            className="bg-emerald-600 px-4 rounded-xl font-bold"
-                          >
-                            +
-                          </button>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 overflow-y-auto pb-4">
-                          {categories.find(c => c.id === selectedCategoryId)?.products.map((prod, i) => (
+                  {showPicker && (
+                    <div className="absolute z-50 top-full left-0 w-72 mt-4 bg-zinc-900 border-2 border-zinc-700 rounded-2xl shadow-2xl overflow-hidden max-h-96 flex flex-col">
+                      {!selectedCategoryId ? (
+                        <div className="p-3 grid grid-cols-2 gap-3 overflow-y-auto">
+                          {categories.map(cat => (
                             <button
-                              key={i}
-                              onClick={() => selectProduct(prod)}
-                              className="bg-zinc-800 p-4 rounded-xl text-lg font-bold text-center hover:bg-emerald-900/40 hover:text-emerald-400 active:scale-95 transition-all text-zinc-100"
+                              key={cat.id}
+                              onClick={() => setSelectedCategoryId(cat.id)}
+                              className="bg-zinc-800 p-5 rounded-xl text-sm font-black uppercase tracking-tight text-center hover:bg-zinc-700 active:scale-95 transition-all text-zinc-200"
                             >
-                              {prod}
+                              {cat.name}
                             </button>
                           ))}
                         </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      ) : (
+                        <div className="p-3 flex flex-col h-full overflow-hidden">
+                          <div className="flex items-center gap-2 mb-4">
+                            <button 
+                              onClick={() => setSelectedCategoryId(null)}
+                              className="bg-zinc-800 p-3 rounded-xl text-zinc-400"
+                            >
+                              <X size={20} />
+                            </button>
+                            <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500">{categories.find(c => c.id === selectedCategoryId)?.name}</h3>
+                          </div>
+
+                          {/* Add new product directly in picker */}
+                          <div className="flex gap-2 mb-4">
+                            <input 
+                              id="new-prod-picker"
+                              type="text" 
+                              placeholder="Новий продукт..."
+                              className="flex-1 bg-zinc-800 border-2 border-zinc-700 rounded-xl px-4 py-3 text-lg font-bold focus:outline-none focus:border-emerald-500"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  addNewProductToCategory(selectedCategoryId, (e.target as HTMLInputElement).value);
+                                  (e.target as HTMLInputElement).value = '';
+                                }
+                              }}
+                            />
+                            <button 
+                              onClick={() => {
+                                const input = document.getElementById('new-prod-picker') as HTMLInputElement;
+                                addNewProductToCategory(selectedCategoryId, input.value);
+                                input.value = '';
+                              }}
+                              className="bg-emerald-600 px-4 rounded-xl font-bold"
+                            >
+                              +
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 overflow-y-auto pb-4">
+                            {categories.find(c => c.id === selectedCategoryId)?.products.map((prod, i) => (
+                              <button
+                                key={i}
+                                onClick={() => selectProduct(prod)}
+                                className="bg-zinc-800 p-4 rounded-xl text-lg font-bold text-center hover:bg-emerald-900/40 hover:text-emerald-400 active:scale-95 transition-all text-zinc-100"
+                              >
+                                {prod}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Units selection block moved to top row vertically */}
+                <div className="flex flex-col justify-center gap-1 bg-zinc-800 border-2 border-zinc-700 rounded-2xl p-1.5">
+                  {UNITS.map(unit => (
+                    <button
+                      key={unit}
+                      onClick={() => setCurrentUnit(unit)}
+                      className={`px-3 py-1 text-xs font-black uppercase rounded-lg transition-all text-center ${
+                        currentUnit === unit 
+                          ? 'text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 shadow-inner scale-105' 
+                          : 'text-zinc-400 hover:text-zinc-200'
+                      }`}
+                    >
+                      {unit}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
@@ -423,7 +473,7 @@ export default function App() {
                     onChange={(e) => setCurrentPrice(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, totalRef)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-4 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
                 <div>
@@ -437,47 +487,30 @@ export default function App() {
                     onChange={(e) => setCurrentTotal(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, quantityRef)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-4 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2 text-center">К-ть</label>
-                    <input
-                      ref={quantityRef}
-                      type="number"
-                      inputMode="decimal"
-                      step="0.01"
-                      value={currentQuantity}
-                      onChange={(e) => setCurrentQuantity(e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(e, 'submit')}
-                      placeholder="0.00"
-                      className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-4 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-center gap-1 self-end pb-1 pr-1">
-                    {UNITS.map(unit => (
-                      <button
-                        key={unit}
-                        onClick={() => setCurrentUnit(unit)}
-                        className={`text-xs leading-none p-1 transition-all font-black uppercase rounded ${
-                          currentUnit === unit 
-                            ? 'text-emerald-400 bg-emerald-950/60 font-black scale-110' 
-                            : 'text-zinc-500 hover:text-zinc-300'
-                        }`}
-                      >
-                        {unit}
-                      </button>
-                    ))}
-                  </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2 text-center">К-ть</label>
+                  <input
+                    ref={quantityRef}
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    value={currentQuantity}
+                    onChange={(e) => setCurrentQuantity(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, 'submit')}
+                    placeholder="0.00"
+                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
                 </div>
               </div>
 
               <button
                 onClick={handleAddItem}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-6 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-4 shadow-xl shadow-emerald-900/40 text-2xl uppercase tracking-widest mt-4"
+                className="w-full h-[40px] bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-xl shadow-emerald-900/40 text-lg uppercase tracking-widest mt-4"
               >
-                <Check size={32} /> Зберегти
+                <Check size={22} /> Зберегти
               </button>
             </div>
           </motion.div>
