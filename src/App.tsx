@@ -411,7 +411,7 @@ export default function App() {
                 )}
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2 text-center">Ціна</label>
                   <input
@@ -423,7 +423,7 @@ export default function App() {
                     onChange={(e) => setCurrentPrice(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, totalRef)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-5 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50"
+                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-4 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
                 <div>
@@ -437,7 +437,7 @@ export default function App() {
                     onChange={(e) => setCurrentTotal(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, quantityRef)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-5 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50"
+                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-4 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
                 <div className="flex gap-2">
@@ -452,18 +452,18 @@ export default function App() {
                       onChange={(e) => setCurrentQuantity(e.target.value)}
                       onKeyDown={(e) => handleKeyDown(e, 'submit')}
                       placeholder="0.00"
-                      className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-5 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50"
+                      className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-4 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-2xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   </div>
-                  <div className="flex flex-col justify-between h-[72px] self-end pb-1 pr-2">
+                  <div className="flex flex-col justify-center gap-1 self-end pb-1 pr-1">
                     {UNITS.map(unit => (
                       <button
                         key={unit}
                         onClick={() => setCurrentUnit(unit)}
-                        className={`text-sm leading-none transition-colors font-black uppercase ${
+                        className={`text-xs leading-none p-1 transition-all font-black uppercase rounded ${
                           currentUnit === unit 
-                            ? 'text-emerald-400 scale-110' 
-                            : 'text-zinc-600'
+                            ? 'text-emerald-400 bg-emerald-950/60 font-black scale-110' 
+                            : 'text-zinc-500 hover:text-zinc-300'
                         }`}
                       >
                         {unit}
