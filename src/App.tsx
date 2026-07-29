@@ -122,6 +122,13 @@ export default function App() {
     setItems(items.filter(item => item.id !== id));
   };
 
+  const handleClearAll = () => {
+    if (confirm('Очистити всі записи у списку?')) {
+      setItems([]);
+      localStorage.removeItem('market_items');
+    }
+  };
+
   const handleFinish = async () => {
     if (items.length === 0) return;
 
@@ -133,18 +140,29 @@ export default function App() {
     const total = items.reduce((acc, item) => acc + item.total, 0).toFixed(2);
     const fullText = `ПОХІД НА БАЗАР\n\n${listText}\n\nРазом: ${total}`;
 
+    let sent = false;
     if (navigator.share) {
       try {
         await navigator.share({
           title: 'ПОХІД НА БАЗАР',
           text: fullText,
         });
+        sent = true;
       } catch (err) {
         console.error('Error sharing:', err);
-        copyToClipboard(fullText);
+        if ((err as Error)?.name !== 'AbortError') {
+          copyToClipboard(fullText);
+          sent = true;
+        }
       }
     } else {
       copyToClipboard(fullText);
+      sent = true;
+    }
+
+    if (sent) {
+      setItems([]);
+      localStorage.removeItem('market_items');
     }
   };
 
@@ -310,12 +328,24 @@ export default function App() {
         <h1 className="text-4xl font-black tracking-tighter text-center uppercase italic text-emerald-400">
           Похід на Базар
         </h1>
-        <button 
-          onClick={() => setIsEditingList(true)}
-          className="text-sm uppercase tracking-widest font-bold text-zinc-300 border-2 border-zinc-700 px-6 py-3 rounded-full hover:bg-zinc-900 transition-colors bg-zinc-900/50 shadow-lg"
-        >
-          Налаштування продуктів
-        </button>
+        <div className="flex items-center gap-3 flex-wrap justify-center">
+          <button 
+            onClick={() => setIsEditingList(true)}
+            className="text-sm uppercase tracking-widest font-bold text-zinc-300 border-2 border-zinc-700 px-5 py-2.5 rounded-full hover:bg-zinc-900 transition-colors bg-zinc-900/50 shadow-lg"
+          >
+            Налаштування продуктів
+          </button>
+          {items.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              className="text-sm uppercase tracking-widest font-bold text-red-400 border-2 border-red-900/50 hover:border-red-500/50 px-4 py-2.5 rounded-full hover:bg-red-950/40 transition-colors bg-zinc-900/50 shadow-lg flex items-center gap-2"
+              title="Очистити всі записи"
+            >
+              <Trash2 size={16} />
+              <span>Очистити</span>
+            </button>
+          )}
+        </div>
       </header>
 
       <main className="max-w-lg mx-auto space-y-4">
@@ -528,19 +558,26 @@ export default function App() {
         )}
 
         {items.length > 0 && (
-          <div className="pt-8 flex items-center gap-4 sticky bottom-6 z-40">
-            <div className="flex-1 bg-zinc-950/90 backdrop-blur-xl border-4 border-emerald-500/30 px-6 py-5 rounded-3xl flex flex-col justify-center shadow-2xl">
-              <span className="text-xs uppercase text-zinc-400 font-black tracking-widest leading-none mb-2">Разом до сплати</span>
-              <span className="text-4xl font-black text-emerald-400 font-mono leading-none">
+          <div className="pt-8 flex items-center gap-2 sm:gap-4 sticky bottom-6 z-40">
+            <button
+              onClick={handleClearAll}
+              className="w-14 h-14 sm:w-20 sm:h-20 bg-zinc-900 border-2 sm:border-4 border-red-900/40 hover:border-red-500/60 text-red-400 rounded-2xl sm:rounded-3xl flex items-center justify-center transition-all active:scale-90 shadow-2xl shrink-0"
+              title="Очистити список"
+            >
+              <Trash2 className="w-6 h-6 sm:w-8 sm:h-8" />
+            </button>
+            <div className="flex-1 bg-zinc-950/90 backdrop-blur-xl border-4 border-emerald-500/30 px-3.5 sm:px-6 py-4 sm:py-5 rounded-2xl sm:rounded-3xl flex flex-col justify-center shadow-2xl min-w-0">
+              <span className="text-[10px] sm:text-xs uppercase text-zinc-400 font-black tracking-widest leading-none mb-1.5 truncate">Разом до сплати</span>
+              <span className="text-2xl sm:text-4xl font-black text-emerald-400 font-mono leading-none truncate">
                 {items.reduce((acc, item) => acc + item.total, 0).toFixed(2)}
               </span>
             </div>
             <button
               onClick={handleFinish}
-              className="w-20 h-20 bg-zinc-900 border-4 border-zinc-700 text-emerald-400 rounded-3xl flex items-center justify-center hover:bg-zinc-800 hover:border-emerald-500/50 transition-all active:scale-90 group shadow-2xl"
-              title="Поділитися списком"
+              className="w-14 h-14 sm:w-20 sm:h-20 bg-zinc-900 border-4 border-zinc-700 text-emerald-400 rounded-2xl sm:rounded-3xl flex items-center justify-center hover:bg-zinc-800 hover:border-emerald-500/50 transition-all active:scale-90 group shadow-2xl shrink-0"
+              title="Поділитися та очистити"
             >
-              <Share2 size={36} className="transition-transform group-hover:scale-110" />
+              <Share2 size={28} className="transition-transform group-hover:scale-110 sm:w-9 sm:h-9" />
             </button>
           </div>
         )}
