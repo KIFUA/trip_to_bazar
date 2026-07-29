@@ -191,11 +191,11 @@ export default function App() {
 
   if (isEditingList) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans p-6 pb-20">
-        <header className="flex justify-between items-center mb-10">
-          <h1 className="text-3xl font-black text-emerald-500 uppercase tracking-tight">Налаштування</h1>
-          <button onClick={() => setIsEditingList(false)} className="p-4 bg-zinc-900 rounded-2xl border-2 border-zinc-800 shadow-xl">
-            <X size={32} />
+      <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans p-3 sm:p-6 pb-20 overflow-x-hidden">
+        <header className="flex justify-between items-center gap-2 mb-6 sm:mb-10">
+          <h1 className="text-xl sm:text-3xl font-black text-emerald-500 uppercase tracking-tight truncate min-w-0">Налаштування</h1>
+          <button onClick={() => setIsEditingList(false)} className="p-2.5 sm:p-3 bg-zinc-900 rounded-xl sm:rounded-2xl border-2 border-zinc-800 shadow-xl shrink-0" title="Закрити">
+            <X className="w-6 h-6 sm:w-7 sm:h-7 text-zinc-300" />
           </button>
         </header>
 
@@ -251,7 +251,7 @@ export default function App() {
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-black uppercase text-zinc-500 tracking-wider shrink-0">Назва:</span>
                       <input 
-                        className="bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded-xl font-bold text-base text-emerald-300 focus:outline-none focus:border-emerald-500 w-full"
+                        className="bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded-xl font-bold text-base text-emerald-300 focus:outline-none focus:border-emerald-500 w-full min-w-0"
                         value={cat.name}
                         onChange={(e) => {
                           const newCats = [...categories];
@@ -305,7 +305,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans p-5 pb-32 overflow-x-hidden">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans p-3 sm:p-5 pb-32 overflow-x-hidden">
       <header className="mb-8 pt-6 flex flex-col items-center gap-4">
         <h1 className="text-4xl font-black tracking-tighter text-center uppercase italic text-emerald-400">
           Похід на Базар
@@ -328,19 +328,19 @@ export default function App() {
               exit={{ opacity: 0, scale: 0.9 }}
               className="bg-zinc-900 border-2 border-zinc-800 rounded-2xl p-4 flex justify-between items-center shadow-xl"
             >
-              <div className="flex-1 overflow-hidden py-2">
+              <div className="flex-1 overflow-hidden py-2 min-w-0">
                 <h3 className="font-black text-3xl leading-tight truncate text-white">{item.product}</h3>
-                <div className="text-zinc-100 text-base font-mono mt-4 flex flex-wrap gap-x-6 gap-y-3">
-                  <span className="bg-zinc-800 px-3 py-1.5 rounded-xl border-2 border-zinc-700/50 font-black shadow-inner">с - {item.total.toFixed(2)}</span>
-                  <span className="bg-zinc-800 px-3 py-1.5 rounded-xl border-2 border-zinc-700/50 font-black text-emerald-400 shadow-inner">ц - {item.price.toFixed(2)}</span>
-                  <span className="bg-zinc-800 px-3 py-1.5 rounded-xl border-2 border-zinc-700/50 font-black text-blue-400 text-xl shadow-inner">к - {item.quantity.toFixed(2)} {item.unit}</span>
+                <div className="text-zinc-100 text-base font-mono mt-4 flex flex-wrap gap-x-4 gap-y-2">
+                  <span className="bg-zinc-800 px-2.5 py-1.5 rounded-xl border-2 border-zinc-700/50 font-black shadow-inner">с - {item.total.toFixed(2)}</span>
+                  <span className="bg-zinc-800 px-2.5 py-1.5 rounded-xl border-2 border-zinc-700/50 font-black text-emerald-400 shadow-inner">ц - {item.price.toFixed(2)}</span>
+                  <span className="bg-zinc-800 px-2.5 py-1.5 rounded-xl border-2 border-zinc-700/50 font-black text-blue-400 text-xl shadow-inner">к - {item.quantity.toFixed(2)} {item.unit}</span>
                 </div>
               </div>
               <button
                 onClick={() => removeItem(item.id)}
-                className="p-4 text-zinc-500 hover:text-red-500 transition-colors ml-4 bg-zinc-800/50 rounded-2xl border-2 border-zinc-800 shadow-lg"
+                className="p-3 sm:p-4 text-zinc-500 hover:text-red-500 transition-colors ml-2 sm:ml-4 bg-zinc-800/50 rounded-2xl border-2 border-zinc-800 shadow-lg shrink-0"
               >
-                <Trash2 size={32} />
+                <Trash2 size={28} />
               </button>
             </motion.div>
           ))}
@@ -350,39 +350,39 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-zinc-900 border-2 border-emerald-500/50 rounded-3xl p-6 space-y-6 shadow-2xl mt-4"
+            className="bg-zinc-900 border-2 border-emerald-500/50 rounded-3xl p-3.5 sm:p-6 space-y-5 shadow-2xl mt-4"
           >
-            <div className="flex justify-between items-center pb-4 border-b-2 border-zinc-800">
+            <div className="flex justify-between items-center pb-3 border-b-2 border-zinc-800">
               <h2 className="text-lg font-black uppercase tracking-widest text-emerald-400">Новий запис</h2>
               <button onClick={() => { setIsAdding(false); resetInputs(); }} className="text-zinc-400 hover:text-white p-2">
                 <X size={28} />
               </button>
             </div>
 
-            <div className="space-y-6 pt-2">
-              <div className="flex justify-between items-end gap-2">
-                <div className="relative w-[211px]">
+            <div className="space-y-5 pt-1">
+              <div className="flex justify-between items-end gap-2 w-full min-w-0">
+                <div className="relative flex-1 min-w-0">
                   <label className="block text-sm font-black uppercase tracking-widest text-zinc-400 mb-2">Продукт</label>
                   <button
                     ref={productRef}
                     onClick={() => setShowPicker(!showPicker)}
-                    className="w-[211px] bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-4 py-3.5 text-left flex justify-between items-center focus:outline-none focus:border-emerald-500 transition-colors text-xl font-bold shadow-inner"
+                    className="w-full max-w-[211px] bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-3 py-3.5 text-left flex justify-between items-center focus:outline-none focus:border-emerald-500 transition-colors text-lg sm:text-xl font-bold shadow-inner min-w-0"
                   >
                     <span className={`truncate ${currentProduct ? 'text-zinc-50' : 'text-zinc-500'}`}>
                       {currentProduct || 'Оберіть...'}
                     </span>
-                    <Plus size={24} className={`transition-transform text-emerald-400 shrink-0 ${showPicker ? 'rotate-45' : ''}`} />
+                    <Plus size={22} className={`transition-transform text-emerald-400 shrink-0 ml-1 ${showPicker ? 'rotate-45' : ''}`} />
                   </button>
 
                   {showPicker && (
-                    <div className="absolute z-50 top-full left-0 w-72 mt-4 bg-zinc-900 border-2 border-zinc-700 rounded-2xl shadow-2xl overflow-hidden max-h-96 flex flex-col">
+                    <div className="absolute z-50 top-full left-0 w-[calc(100vw-48px)] sm:w-72 max-w-[280px] mt-2 bg-zinc-900 border-2 border-zinc-700 rounded-2xl shadow-2xl overflow-hidden max-h-96 flex flex-col">
                       {!selectedCategoryId ? (
-                        <div className="p-3 grid grid-cols-2 gap-3 overflow-y-auto">
+                        <div className="p-3 grid grid-cols-2 gap-2 overflow-y-auto">
                           {categories.map(cat => (
                             <button
                               key={cat.id}
                               onClick={() => setSelectedCategoryId(cat.id)}
-                              className="bg-zinc-800 p-5 rounded-xl text-sm font-black uppercase tracking-tight text-center hover:bg-zinc-700 active:scale-95 transition-all text-zinc-200"
+                              className="bg-zinc-800 p-3.5 rounded-xl text-xs sm:text-sm font-black uppercase tracking-tight text-center hover:bg-zinc-700 active:scale-95 transition-all text-zinc-200 truncate"
                             >
                               {cat.name}
                             </button>
@@ -390,23 +390,23 @@ export default function App() {
                         </div>
                       ) : (
                         <div className="p-3 flex flex-col h-full overflow-hidden">
-                          <div className="flex items-center gap-2 mb-4">
+                          <div className="flex items-center gap-2 mb-3">
                             <button 
                               onClick={() => setSelectedCategoryId(null)}
-                              className="bg-zinc-800 p-3 rounded-xl text-zinc-400"
+                              className="bg-zinc-800 p-2.5 rounded-xl text-zinc-400 shrink-0"
                             >
-                              <X size={20} />
+                              <X size={18} />
                             </button>
-                            <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500">{categories.find(c => c.id === selectedCategoryId)?.name}</h3>
+                            <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500 truncate">{categories.find(c => c.id === selectedCategoryId)?.name}</h3>
                           </div>
 
                           {/* Add new product directly in picker */}
-                          <div className="flex gap-2 mb-4">
+                          <div className="flex gap-1.5 mb-3">
                             <input 
                               id="new-prod-picker"
                               type="text" 
                               placeholder="Новий продукт..."
-                              className="flex-1 bg-zinc-800 border-2 border-zinc-700 rounded-xl px-4 py-3 text-lg font-bold focus:outline-none focus:border-emerald-500"
+                              className="flex-1 bg-zinc-800 border-2 border-zinc-700 rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:border-emerald-500 min-w-0"
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                   addNewProductToCategory(selectedCategoryId, (e.target as HTMLInputElement).value);
@@ -420,18 +420,18 @@ export default function App() {
                                 addNewProductToCategory(selectedCategoryId, input.value);
                                 input.value = '';
                               }}
-                              className="bg-emerald-600 px-4 rounded-xl font-bold"
+                              className="bg-emerald-600 px-3 rounded-xl font-bold text-lg shrink-0"
                             >
                               +
                             </button>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2 overflow-y-auto pb-4">
+                          <div className="grid grid-cols-2 gap-2 overflow-y-auto pb-2">
                             {categories.find(c => c.id === selectedCategoryId)?.products.map((prod, i) => (
                               <button
                                 key={i}
                                 onClick={() => selectProduct(prod)}
-                                className="bg-zinc-800 p-4 rounded-xl text-lg font-bold text-center hover:bg-emerald-900/40 hover:text-emerald-400 active:scale-95 transition-all text-zinc-100"
+                                className="bg-zinc-800 p-3 rounded-xl text-sm font-bold text-center hover:bg-emerald-900/40 hover:text-emerald-400 active:scale-95 transition-all text-zinc-100 truncate"
                               >
                                 {prod}
                               </button>
@@ -444,12 +444,12 @@ export default function App() {
                 </div>
 
                 {/* Units selection block moved to top row vertically */}
-                <div className="flex flex-col justify-center gap-1 bg-zinc-800 border-2 border-zinc-700 rounded-2xl p-1.5">
+                <div className="flex flex-col justify-center gap-1 bg-zinc-800 border-2 border-zinc-700 rounded-2xl p-1 shrink-0">
                   {UNITS.map(unit => (
                     <button
                       key={unit}
                       onClick={() => setCurrentUnit(unit)}
-                      className={`px-3 py-1 text-xs font-black uppercase rounded-lg transition-all text-center ${
+                      className={`px-2.5 py-1 text-xs font-black uppercase rounded-lg transition-all text-center ${
                         currentUnit === unit 
                           ? 'text-emerald-400 bg-emerald-950/80 border border-emerald-500/50 shadow-inner scale-105' 
                           : 'text-zinc-400 hover:text-zinc-200'
@@ -461,7 +461,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 <div>
                   <label className="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2 text-center">Ціна</label>
                   <input
@@ -473,7 +473,7 @@ export default function App() {
                     onChange={(e) => setCurrentPrice(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, totalRef)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full min-w-0 bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-1 sm:px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-lg sm:text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
                 <div>
@@ -487,7 +487,7 @@ export default function App() {
                     onChange={(e) => setCurrentTotal(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, quantityRef)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full min-w-0 bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-1 sm:px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-lg sm:text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
                 <div>
@@ -501,7 +501,7 @@ export default function App() {
                     onChange={(e) => setCurrentQuantity(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, 'submit')}
                     placeholder="0.00"
-                    className="w-full bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full min-w-0 bg-zinc-800 border-2 border-zinc-700 rounded-2xl px-1 sm:px-2 py-3 focus:outline-none focus:border-emerald-500 transition-colors font-mono text-center text-lg sm:text-xl font-black text-zinc-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
               </div>
